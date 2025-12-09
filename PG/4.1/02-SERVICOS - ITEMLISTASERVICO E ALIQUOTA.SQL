@@ -13,7 +13,7 @@ SELECT
         ELSE '090101'
     END AS IDLISTASERVICO, --== cTribMun
     cadnbs.idnbs, 
-    --'' AS idreferencia,
+    '' AS idreferencia,
     (regexp_match(CADPRODUTO.LST,'[0-9]{6}\.([0-9]{1,3})'))[1] AS CodigoTributacaoMunicipio,
     CADPRODUTO.cfpsdentromunic AS idcfps,
     NOTASFISCAIS.aliqiss,
