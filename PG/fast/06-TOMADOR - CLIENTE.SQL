@@ -1,0 +1,70 @@
+SELECT 
+    CAST(DOCFISCAL.DSPESSOA AS VARCHAR(150)) AS nome,
+    CASE WHEN  TIPO.TIPOPESSOA > 'E' THEN --Brasil
+        DOCFISCAL.iddocident 
+    END AS CGCCPF,
+    DOCFISCAL.IDIM AS INSCMUNIC,
+    CASE WHEN  TIPO.TIPOPESSOA = 'E' AND COALESCE(NULLIF(RIGHT(CAST(DOCFISCAL.idibgepais AS VARCHAR(5)),4),''),'1058') <> '1058'
+        THEN CAST(COALESCE(pessoa.idnif,NULLIF(DOCFISCAL.iddocident,'')) AS VARCHAR(40))
+    END AS Nif,
+    '' AS CAEPF, --Pessoas Físicas
+    CASE WHEN COALESCE(NULLIF(RIGHT(CAST(DOCFISCAL.idibgepais AS VARCHAR(5)),4),''),'1058') = '1058'
+        THEN 2
+        WHEN TIPO.TIPOPESSOA = 'E' AND COALESCE(pessoa.idnif,DOCFISCAL.iddocident,'') = '' 
+        THEN 0 ----0-NaoInformado,1-Dispensado,2-NaoExigencia
+    END AS cNaoNIF, 
+    CAST(DOCFISCAL.DSENDERECO AS VARCHAR(255)) AS endereco,
+    COALESCE(NULLIF(regexp_replace( DOCFISCAL.dsnumero , '[^0-9]', '', 'g'),''),'S/N') AS nroendereco,
+    DOCFISCAL.dscomplemento AS complemento,
+    COALESCE(NULLIF(DOCFISCAL.dsbairro,''),'CENTRO') AS bairro,
+    DOCFISCAL.idibgecidade AS CodMunicipio,
+    CASE 
+        WHEN TIPO.TIPOPESSOA IN ('F','J')
+        THEN DOCFISCAL.iduf
+        WHEN TIPO.TIPOPESSOA = 'E' AND DOCFISCAL.DSESTADO>'0'
+        THEN DOCFISCAL.DSESTADO
+        ELSE 'EX'
+    END AS UF,
+   CASE WHEN  TIPO.TIPOPESSOA IN ('F','J')
+    THEN CAST(regexp_replace(COALESCE(NULLIF(DOCFISCAL.idcep,''),PESSOAENDERECO.IDCEP), '[^0-9]', '', 'g') AS VARCHAR(8)) 
+    WHEN COALESCE(REPLACE(DOCFISCAL.idcep,LEFT(DOCFISCAL.idcep,1),''),'') = '' 
+    THEN '99999999'
+    ELSE DOCFISCAL.idcep
+    END AS cep,
+    DOCFISCAL.dscidade AS xMunicipio,
+    COALESCE(NULLIF(RIGHT(CAST(DOCFISCAL.idibgepais AS VARCHAR(5)),4),''),'1058') AS CodPais,
+    PESSOAendereco.dsreferencia AS PontoReferencia,
+    TIPO.TIPOPESSOA
+FROM DOCFISCAL
+  JOIN EMPRESA ON EMPRESA.CDEMPRESA = DOCFISCAL.CDEMPRESA
+  JOIN PESSOA AS EMITENTE ON EMITENTE.CDPESSOA = EMPRESA.CDESTABELECIMENTO
+  JOIN PESSOA ON PESSOA.CDPESSOA = DOCFISCAL.CDPESSOA
+  LEFT JOIN PESSOAENDERECO ON PESSOAENDERECO.CDPESSOA = PESSOA.CDPESSOA AND PESSOAENDERECO.NRTIPOENDERECO = 0
+  LEFT JOIN PAIS AS NACIONALIDADE ON NACIONALIDADE.CDPAIS = pessoa.CDPAIS
+ CROSS JOIN LATERAL ( SELECT
+ CASE 
+    CASE WHEN REPLACE(DOCFISCAL.iddocident,LEFT(DOCFISCAL.iddocident,1),'') = '' AND NACIONALIDADE.idibge IN (NULL,'','01058','1058')
+            THEN 'FC' --CONSUMIDOR
+         WHEN EMITENTE.iddocident = DOCFISCAL.iddocident
+            THEN 'P' --Emissão para o proprio CNPJ
+         WHEN NACIONALIDADE.idibge IN ('01058','1058') AND DOCFISCAL.iduf IN ( 'AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RN', 'RS', 'RJ', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO') THEN CASE 
+         WHEN LENGTH(DOCFISCAL.iddocident)=11 AND DOCFISCAL.iddocident ~ '[0-9]{9}[0-9Xx]{2}'
+           THEN 'F' --PESSOA FISICA
+         WHEN LENGTH(DOCFISCAL.iddocident)=14 AND DOCFISCAL.iddocident ~ '[0-9]{14}'
+            THEN 'J' --EMPRESA JURIDICA
+            ELSE 'EB' --ESTRANJEIRO NACIONAL ERRO
+        END 
+            ELSE 'E' --ESTRANJEIRO
+        END 
+        WHEN 'F'  THEN 'F' --CPF de Pessoa Fisica
+        WHEN 'J'  THEN 'J' --CNPJ de Empresa Juridica
+        WHEN 'FC' THEN 'C' --Consumidor não identificado
+        WHEN 'E'  THEN 'E' --Extrangeiro
+        WHEN 'EN' THEN 'E' --Extrangeiro com CPF
+        WHEN 'EB' THEN 'C' --Extrangeiro Residente no Brasil comum no RJ
+        WHEN 'P'  THEN 'A' --Emissão para o proprio CNPJ
+        ELSE 'C' -- Outros
+    END AS TIPOPESSOA
+) AS TIPO
+WHERE DOCFISCAL.CDEMPRESA = :CDEMPRESA
+  AND DOCFISCAL.CDDOCFISCAL = :CDNOTA
