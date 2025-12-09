@@ -77,7 +77,7 @@ ELSE
 'In: ' || TO_CHAR(NOTASFISCAIS.DATAHORAIN,'DD/MM/YYYY')|| ' - ' ||
 'Out: ' || TO_CHAR(NOTASFISCAIS.DATAHORAOUT,'DD/MM/YYYY')
 END
-,'Observacoes: ' || convert_from(NOTASFISCAIS.OBSERVACAO, 'LATIN1') 
+,'Observacoes: ' || nullif(convert_from(NOTASFISCAIS.OBSERVACAO, 'LATIN1'),'')
 ,(SELECT string_agg(obsimpfiscal,'|') FROM (
         SELECT cadimposto.obsimpfiscal
         FROM DETNOTAFISCAL 

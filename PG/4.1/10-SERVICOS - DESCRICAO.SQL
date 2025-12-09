@@ -8,13 +8,21 @@ FROM (
                          DETNOTAFISCAL.DESCRICAO
                          --COALESCE(DETNOTAFISCAL.QTDE, '1') 
                         ||CASE 
-                        WHEN SUM(DETNOTAFISCAL.QTDE) > 1 AND SUM(DETNOTAFISCAL.QTDE) = CAST(SUM(DETNOTAFISCAL.QTDE) AS INTEGER)
+                        WHEN SUM(DETNOTAFISCAL.QTDE) > 1 AND SUM(DETNOTAFISCAL.QTDE) = CAST(SUM(DETNOTAFISCAL.QTDE) AS INTEGER) AND DETNOTAFISCAL.VALUNIT > 0
                         THEN ''
                          || ' - '||TRIM(to_char(DETNOTAFISCAL.VALUNIT,'999G999G999G990D00'))
                          || ' x '||TRIM(to_char(SUM(DETNOTAFISCAL.QTDE),'999G999G999G990'))
-                        WHEN SUM(DETNOTAFISCAL.QTDE) > 1 
+                        WHEN SUM(DETNOTAFISCAL.QTDE) > 1  AND DETNOTAFISCAL.VALUNIT > 0
                         THEN ''
                          || ' - '||TRIM(to_char(DETNOTAFISCAL.VALUNIT,'999G999G999G990D00'))
+                         || ' x '||TRIM(to_char(SUM(DETNOTAFISCAL.QTDE),'999G999G999G990D00'))
+                        WHEN SUM(DETNOTAFISCAL.QTDE) > 1 AND SUM(DETNOTAFISCAL.QTDE) = CAST(SUM(DETNOTAFISCAL.QTDE) AS INTEGER)
+                        THEN ''
+                         || ' - '||TRIM(to_char(SUM(DETNOTAFISCAL.VALTOTAL/DETNOTAFISCAL.QTDE),'999G999G999G990D00'))
+                         || ' x '||TRIM(to_char(SUM(DETNOTAFISCAL.QTDE),'999G999G999G990'))
+                        WHEN SUM(DETNOTAFISCAL.QTDE) > 1 
+                        THEN ''
+                         || ' - '||TRIM(to_char(SUM(DETNOTAFISCAL.VALTOTAL/DETNOTAFISCAL.QTDE),'999G999G999G990D00'))
                          || ' x '||TRIM(to_char(SUM(DETNOTAFISCAL.QTDE),'999G999G999G990D00'))
                          ELSE '' END
                          || ' = ' ||TRIM(to_char(SUM(DETNOTAFISCAL.VALTOTAL),'999G999G999G990D00'))
