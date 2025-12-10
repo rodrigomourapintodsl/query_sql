@@ -6,7 +6,7 @@ SELECT
         THEN CADPRODUTO.LST|| '01'
         WHEN CADPRODUTO.LST ~ '[0-9]{2}\.[0-9]{2}' 
         THEN REPLACE(CADPRODUTO.LST,'.','')|| '01'
-       WHEN CADPRODUTO.LST ~ '[0-9]\.[0-9]{2}' 
+        WHEN CADPRODUTO.LST ~ '[0-9]\.[0-9]{2}' 
         THEN '0'||REPLACE(CADPRODUTO.LST,'.','')|| '01'
         WHEN CADPRODUTO.LST ~ '[0-9]{4}' 
         THEN COALESCE(CADPRODUTO.ncm) || '01'
