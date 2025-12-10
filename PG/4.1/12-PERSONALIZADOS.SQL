@@ -5,7 +5,15 @@ SELECT
         THEN 'SilTecnologia_v1.00'
     END AS verAplic,
     'NFS' 
-    ||(SELECT ID FROM (SELECT ''
+    ||(SELECT ID ||
+    CAST(  (SELECT mod(11-MOD(SUM(NFSE_MULT),11),10) AS NFSE_digito FROM (
+        SELECT CAST(NFSE as INT) * lINHA as NFSE_MULT FROM (
+            select ((ROW_NUMBER() OVER()-1) %8)+2 AS lINHA,NFSE FROM regexp_split_to_table(replace((left(
+                    ID
+                ,-1)),'-',''), '[&&]*') AS NFSE
+            ) as NFSE_DESC
+        ) as A) AS CHAR(1)) ---NFSE_digito_esperado -- Calculo DV
+    FROM (SELECT ''
     || TRIM(TO_CHAR(CAST( CONFIGURA3.CODIBGEHOTEL AS INTEGER),'0000000')) --IBGE
     || '1' -- 1==Ambiente Produção
     || '2' -- 2==CNPJ_EMITENTE
@@ -13,13 +21,6 @@ SELECT
     || TRIM(TO_CHAR(NOTASFISCAIS.NRONOTA,'0000000000000'))
     || TRIM(TO_CHAR(NOTASFISCAIS.DATAHORASAIDA,'YYDD'))
     || TRIM(TO_CHAR(NOTASFISCAIS.CODNOTA,'000000000'))
-    || CAST(  (SELECT mod(11-MOD(SUM(NFSE_MULT),11),10) AS NFSE_digito FROM (
-        SELECT CAST(NFSE as INT) * lINHA as NFSE_MULT FROM (
-            select ((ROW_NUMBER() OVER()-1) %8)+2 AS lINHA,NFSE FROM regexp_split_to_table(replace((left(
-                '3530607110005555555555500019031281012511055999528'
-            ,-1)),'-',''), '[&&]*') AS NFSE
-        ) as NFSE_DESC
-    ) as A) AS CHAR(1)) ---NFSE_digito_esperado -- Calculo DV
     AS ID ) AS NFS
     )
     AS ID_NFS,
@@ -40,5 +41,3 @@ SELECT
     WHERE NOTASFISCAIS.CODHOTEL = :CDEMPRESA
   AND NOTASFISCAIS.CODNOTA = :CDNOTA
   AND CONFIGURA3.CODIBGEHOTEL IN ('3530607')
-
-  
