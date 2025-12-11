@@ -15,7 +15,21 @@ SELECT COALESCE(
 ) AS XPAG,
 2 AS mdPrestacao_comExt,
 0 AS vincPrest_comExt,
-moeda.fliso4217 AS tpMoeda_comExt,
+CASE moeda.fliso4217 --moeda ISO 4217 --https://www.bcb.gov.br/estabilidadefinanceira/todasmoedas
+ WHEN  0 THEN '790' --0-BRL - Real
+ WHEN  1 THEN '220' --1-USD - Dólar Americano
+ WHEN  2 THEN '978' --2-EUR - Euro
+ WHEN  3 THEN '706' --3-ARS - Peso Argentino
+ WHEN  4 THEN '450' --4-PYG - Guarani
+ WHEN  5 THEN '745' --5-UYU - Peso Uruguaio
+ WHEN  6 THEN '540' --6-GBP - Libra Esterlina
+ WHEN  7 THEN '165' --7-CAD - Dólar Canadense
+ WHEN  8 THEN '715' --8-CLP - Peso Chileno
+ WHEN  9 THEN '720' --9-COP - Peso Colombiano
+ WHEN 10 THEN '741' --10-MXN - Peso Mexicano
+ WHEN 11 THEN '660' --11-PEN - Nuevo Sol
+ ELSE '790'
+END AS tpMoeda_comExt,
 DOCFISCAL.VLTOTAL / DETLANCCAIXA.VLCOTACAO AS vServMoeda
 FROM EMPRESA
     JOIN DOCFISCAL ON DOCFISCAL.CDEMPRESA = EMPRESA.CDEMPRESA

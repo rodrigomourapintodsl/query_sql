@@ -35,6 +35,7 @@ ELSE
 END
 ,
 'UH: ' || LANCCAIXACONTAHOTEL.CDUH
+,'Razao: '|| LANCCAIXACONTAHOTEL.idcontafechamento
 ,'Observacoes: ' || 
     NULLIF(TRIM(regexp_replace(
            DOCFISCAL.BLOBSERVACAO     
