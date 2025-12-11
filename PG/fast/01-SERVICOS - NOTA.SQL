@@ -1,6 +1,6 @@
 /* Gerador NFS-e Nacional
 * Versão==1.0
-* Gerada em==08/12/2025;
+* Gerada em==11/12/2025;
 * ENFE==17.07+;
 * PostGreSQL==12+;
 * Fast BackOffice==10.139.1+

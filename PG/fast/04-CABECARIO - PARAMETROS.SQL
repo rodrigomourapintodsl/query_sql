@@ -14,7 +14,7 @@ SELECT
         ELSE 0
          --6-retMicroempresarioEmpresaPP
     END AS REGIMEESPECIALTRIBUTACAO,  ----0-nenhum, 1-MicroempresaMunicipal, 2-Estimativa, 3-SociedadeProfissionais, 4-Cooperativa, 5-MicroempresarioIndividual, 6-MicroempresarioEmpresaPP, 7-LucroReal, 8-LucroPresumido, 9-SimplesNacional,10-Imune,11-EmpresaIndividualRELI,12-EmpresaPP,13-MicroEmpresario,14-Outros,15-MovimentoMensal,16-ISSQNAutonomos,17-ISSQNSociedade,18-NotarioRegistrador,19-TribFaturamentoVariavel,20-Fixo,21-Isencao,22-ExigibSuspensaJudicial,23-ExigibSuspensaAdm
-    CASE WHEN NFERETORNO.FLTIPONOTA=1 AND (DOCFISCAL.FLCANCELADO=1 OR DOCFISCAL.FLINUTILIZADO=1 OR  NFERETORNO.FLSTATUS IN (5,9))
+    CASE WHEN NFERETORNO.FLTIPONOTA=1 AND ( NFERETORNO.FLSTATUS IN (2,6))
         THEN DOCFISCAL.DSMOTIVOCANC 
     END AS DSMOTIVOCANC,    
     1 AS infAdicAT, ----0-Sim,1-Nao
