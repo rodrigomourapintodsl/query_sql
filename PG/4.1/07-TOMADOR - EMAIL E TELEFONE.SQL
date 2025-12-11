@@ -20,7 +20,7 @@ FROM (
 --split nome definido <>
         SELECT ID
             ,COALESCE(
-                (regexp_match(EMAIL, '<(.*)>'))[1],
+                (REGEXP_MATCH(EMAIL, '<(.*)>'))[1],
                 EMAIL
             ) AS EMAIL,
             EMAILS

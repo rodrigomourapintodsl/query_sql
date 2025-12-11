@@ -21,7 +21,7 @@ SELECT
         THEN CASE 
                     WHEN CONFIGURA.telefone LIKE '+55' 
                     THEN REGEXP_REPLACE(RIGHT(CONFIGURA.telefone,-3),'[^0-9]','','g')
-                    ELSE  REGEXP_REPLACE(CONFIGURA.telefone,'[^0-9]','','g')
+                    ELSE REGEXP_REPLACE(CONFIGURA.telefone,'[^0-9]','','g')
                  END
     END AS fone_fax_emp,
     trim(split_part(configura.email,';',1)) AS email_emp
