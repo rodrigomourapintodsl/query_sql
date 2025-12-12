@@ -17,6 +17,7 @@ SELECT
 --    (regexp_match(CADPRODUTO.LST,'[0-9]{6}\.([0-9]{1,3})'))[1] AS CodigoTributacaoMunicipio,
     (regexp_match(cadimposto.obsimposto,'[0-9]{6}\.([0-9]{1,3})'))[1] AS CodigoTributacaoMunicipio,
     CADPRODUTO.cfpsdentromunic AS idcfps,
+    DETNOTAFISCAL.CSTPIS AS CSTPIS,
     NOTASFISCAIS.aliqiss,
 --    COALESCE(MAX(DOCFISCALITEMIVADUAL.IDCLASSIFICACAOTRIBUTARIA),'100001') AS IDCLASSIFICACAOTRIBUTARIA
     '100001' AS IDCLASSIFICACAOTRIBUTARIA
