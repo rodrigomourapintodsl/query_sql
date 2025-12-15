@@ -1,7 +1,9 @@
 SELECT 
     EMITENTE.dsnomepessoa AS RazaoSocial,
     EMITENTE.iddocident AS CGC,
-    EMITENTE.IDIM AS INSCMUNICIP,
+    CASE WHEN CIDADE.idibge IN ('31026052') THEN
+      EMITENTE.IDIM 
+    END AS INSCMUNICIP,
     '' AS CAEPF, --Pessoas Físicas
     0 AS cNaoNIF, ----0-NaoInformado,1-Dispensado,2-NaoExigencia
     PESSOAENDERECO.dslogradouro AS endereco_emp,
@@ -21,7 +23,7 @@ SELECT
         THEN CASE 
                     WHEN PESSOACONTATO.idtelefone LIKE '+55' 
                     THEN REGEXP_REPLACE(RIGHT(PESSOACONTATO.idtelefone,-3),'[^0-9]','','g')
-                    ELSE  REGEXP_REPLACE(PESSOACONTATO.idtelefone,'[^0-9]','','g')
+                    ELSE REGEXP_REPLACE(PESSOACONTATO.idtelefone,'[^0-9]','','g')
                  END
     END AS fone_fax_emp,
     trim(split_part(PESSOACONTATO.dsemailpessoa,';',1)) AS email_emp

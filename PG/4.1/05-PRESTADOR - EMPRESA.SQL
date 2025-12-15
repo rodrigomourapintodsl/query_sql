@@ -1,7 +1,9 @@
 SELECT 
     CONFIGURA.RazaoSocial,
     CONFIGURA.CGC,
-    CONFIGURA.INSCMUNICIP,
+     CASE WHEN CONFIGURA3.CODIBGEHOTEL IN ('31026052') THEN
+      CONFIGURA.INSCMUNICIP
+    END AS INSCMUNICIP,
     '' AS CAEPF, --Pessoas Físicas
     0 AS cNaoNIF, ----0-NaoInformado,1-Dispensado,2-NaoExigencia
     CONFIGURA.ENDERECO AS endereco_emp,
