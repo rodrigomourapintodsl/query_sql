@@ -20,9 +20,9 @@ SELECT
     1 AS infAdicAT, ----0-Sim,1-Nao
     1 AS Transacao, ----0-Sim,1-Nao
     0 AS tpEmit, ----0-Prestador,1-Tomador,2-Intermediario
-    CASE 
-        WHEN REGIMEEMPRESA.nrvalorint=0 
-        THEN 1 --1-OptanteMEI
+    CASE REGIMEEMPRESA.nrvalorint
+        WHEN 0 THEN 1 --1-OptanteMEI
+        WHEN 3 THEN 1 --1-OptanteMEI
         ELSE 0 --0-NaoOptante,2-OptanteMEEPP
     END AS OptanteSN,
     CASE 
@@ -42,3 +42,13 @@ SELECT
   WHERE DOCFISCAL.CDEMPRESA = :CDEMPRESA
   AND DOCFISCAL.CDDOCFISCAL = :CDNOTA
   and NFERETORNO.fltiponota = 1
+
+
+   /* Regime tributário da empresa */
+ CASE REGIMETRIBUTARIO.NRVALORINT 
+    WHEN 0 THEN 0 --Simples nacional
+    WHEN 3 THEN 1 --Sub-limite
+    WHEN 1 THEN 2 --Lucro real
+    WHEN 2 THEN 2 --Lucro presumido
+      ELSE 0 
+ END AS CRT
