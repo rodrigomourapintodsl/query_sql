@@ -1,5 +1,6 @@
 SELECT 
     DOCFISCAL.DTEMISSAO AS DATAEMISSAO, ----COMPETENCIA_CAB,
+    Current_timestamp AS DATACOMPETENCIA,
     CASE 
         --WHEN REGIMEEMPRESA.nrvalorint=0 AND EMITENTE.floptantesimples=1 ----0-Simples nacional, 1-Lucro real, 2-Lucro presumido, 3-Simples Nacional - Sublimite
         --THEN 9 --9-retSimplesNacional

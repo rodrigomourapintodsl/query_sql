@@ -6,7 +6,7 @@ SELECT
     regexp_replace(NOTASFISCAIS.CGCCPF , '[^0-9]', '', 'g')
     END AS CGCCPF,
     TIPO.TIPOPESSOA,
-    regexp_replace(NOTASFISCAIS.inscmunicipal , '[^0-9]', '', 'g') AS INSCMUNIC,
+    cast(cast(regexp_replace(NOTASFISCAIS.inscmunicipal , '[^0-9]', '', 'g') as integer) as varchar(15)) AS INSCMUNIC,
     CASE WHEN  TIPO.TIPOPESSOA = 'E' AND COALESCE(NULLIF(RIGHT(CAST(NOTASFISCAIS.codpais AS VARCHAR(5)),4),''),'1058') <> '1058'
         THEN CAST(NOTASFISCAIS.CGCCPF AS VARCHAR(40))
     END AS Nif,
