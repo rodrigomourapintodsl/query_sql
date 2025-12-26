@@ -29,8 +29,6 @@ SELECT
         ELSE 2 --2-FederaisMunicipalforaSN
     END AS RegimeApuracaoSN, --,1-FederaisSN,
     0 AS tpXML, ----0-RPS,1-NFSe,2-Espelho
-    0 AS ZERO,
-    1 AS UM,
     CASE WHEN CONFIGURA3.REGIMETRIBUTARIO IN (0,1) THEN 1 ELSE 0 END AS indTotTrib, --0 == Normal , 1 == Simples Nacional
     /*Reforma Tributária*/
     CASE WHEN CONFIGURA4.FLREFORMATRIBUTARIA = 1 AND CURRENT_DATE>='20260105' THEN CONFIGURA4.FLREFORMATRIBUTARIA END AS REFORMATRIBUTARIA,
@@ -38,7 +36,9 @@ SELECT
     1 AS indFinal, --Indica operação de uso ou consumo pessoal.
     1 AS tpOper, -- código indicador de operação (1 == Fornecimento com pagamento posterior; 2 == Recebimento do pagamento com fornecimento já realizado; 3 == Fornecimento com pagamento já realizado; 4 == Recebimento do pagamento com fornecimento posterior; 5 == Fornecimento e recebimento do pagamento concomitantes.)
     4 AS tpEnteGov, -- Tipo de ente governamental  (1 == União;2 == Estado;3 == Distrito Federal;4 == Município;9 == Outro )
-    CASE WHEN CONFIGURA.CGC = NOTASFISCAIS.CGCCPF THEN 0 ELSE 1 END AS indDest --0 = idTomadorAdquirenteDestinatarioIguais, 1 = idTomadorAdquirenteIguais
+    CASE WHEN CONFIGURA.CGC = NOTASFISCAIS.CGCCPF THEN 0 ELSE 1 END AS indDest, --0 = idTomadorAdquirenteDestinatarioIguais, 1 = idTomadorAdquirenteIguais
+    0 AS ZERO,
+    1 AS UM
   FROM NOTASFISCAIS
   JOIN CONFIGURA ON CONFIGURA.CODHOTEL = NOTASFISCAIS.CODHOTEL
   JOIN CONFIGURA3 ON CONFIGURA3.CODHOTEL = NOTASFISCAIS.CODHOTEL
