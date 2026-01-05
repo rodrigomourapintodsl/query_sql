@@ -1,6 +1,6 @@
 /* Gerador NFS-e Nacional
 * Versão==1.0
-* Gerada em==05/01/2026;
+* Gerada em==0/01/2026;
 * ENFE==17.07+;
 * PostGreSQL==12+;
 * Gerencia Hoteleira 4.1/3.1==10.97+
