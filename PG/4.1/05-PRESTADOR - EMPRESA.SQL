@@ -2,7 +2,7 @@ SELECT
     CONFIGURA.RazaoSocial,
     CONFIGURA.CGC,
      CASE WHEN CONFIGURA3.CODIBGEHOTEL IN ('31026052','2611606','21113002') THEN
-      cast(cast(regexp_replace(CONFIGURA.INSCMUNICIP, '[^0-9]', '', 'g') as int) as varcuar(15))
+      cast(cast(regexp_replace(CONFIGURA.INSCMUNICIP, '[^0-9]', '', 'g') as int) as varchar(15))
     END AS INSCMUNICIP,
     '' AS CAEPF, --Pessoas Físicas
     0 AS cNaoNIF, ----0-NaoInformado,1-Dispensado,2-NaoExigencia
