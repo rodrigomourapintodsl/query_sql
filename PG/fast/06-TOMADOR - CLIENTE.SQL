@@ -3,7 +3,7 @@ SELECT
     CASE WHEN  TIPO.TIPOPESSOA > 'E' THEN --Brasil
         DOCFISCAL.iddocident 
     END AS CGCCPF,
-    DOCFISCAL.IDIM AS INSCMUNIC,
+    cast(regexp_replace(DOCFISCAL.IDIM , '[^0-9]', '', 'g') as varchar(15)) AS AS INSCMUNIC,
     CASE WHEN  TIPO.TIPOPESSOA = 'E' AND COALESCE(NULLIF(RIGHT(CAST(DOCFISCAL.idibgepais AS VARCHAR(5)),4),''),'1058') <> '1058'
         THEN CAST(COALESCE(pessoa.idnif,NULLIF(DOCFISCAL.iddocident,'')) AS VARCHAR(40))
     END AS Nif,
@@ -13,11 +13,11 @@ SELECT
         WHEN TIPO.TIPOPESSOA = 'E' AND COALESCE(pessoa.idnif,DOCFISCAL.iddocident,'') = '' 
         THEN 0 ----0-NaoInformado,1-Dispensado,2-NaoExigencia
     END AS cNaoNIF, 
-    CAST(DOCFISCAL.DSENDERECO AS VARCHAR(255)) AS endereco,
-    COALESCE(NULLIF(regexp_replace( DOCFISCAL.dsnumero , '[^0-9]', '', 'g'),''),'S/N') AS nroendereco,
-    DOCFISCAL.dscomplemento AS complemento,
-    COALESCE(NULLIF(DOCFISCAL.dsbairro,''),'CENTRO') AS bairro,
-    DOCFISCAL.idibgecidade AS CodMunicipio,
+    CASE WHEN LENGTH(DOCFISCAL.DSENDERECO) > 3 THEN CAST(DOCFISCAL.DSENDERECO AS VARCHAR(255)) END AS endereco,
+    CASE WHEN LENGTH(DOCFISCAL.DSENDERECO) > 3 THEN COALESCE(NULLIF(regexp_replace( DOCFISCAL.dsnumero , '[^0-9]', '', 'g'),''),'S/N') END AS nroendereco,
+    CASE WHEN LENGTH(DOCFISCAL.DSENDERECO) > 3 THEN DOCFISCAL.dscomplemento END AS complemento,
+    CASE WHEN LENGTH(DOCFISCAL.DSENDERECO) > 3 THEN COALESCE(NULLIF(DOCFISCAL.dsbairro,''),'CENTRO') END AS bairro,
+    CASE WHEN LENGTH(DOCFISCAL.DSENDERECO) > 3 THEN DOCFISCAL.idibgecidade END AS CodMunicipio,
     CASE 
         WHEN TIPO.TIPOPESSOA IN ('F','J')
         THEN DOCFISCAL.iduf

@@ -3,7 +3,7 @@ SELECT
     CASE
         WHEN CIDADE.idibge IN ('3530607')
         THEN 'SilTecnologia_v1.00'
-        WHEN CIDADE.idibge IN ('3518701','3518800','3548500','3143906','2704302','3549805')
+        WHEN CIDADE.idibge ('3518701','3518800','3548500','3143906','2704302','3549805','4128104','3548708','3523909')
        THEN '2.04' -- Gingfes Abrasf 2.04
     END AS verAplic,
     'NFS'
