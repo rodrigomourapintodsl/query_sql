@@ -1,15 +1,21 @@
 SELECT
     CASE 
-        WHEN CADPRODUTO.LST ~ '[0-9]{6}' 
-        THEN (REGEXP_MATCH(CADPRODUTO.LST,'[0-9]{6}'))[1]
-        WHEN CADPRODUTO.LST ~ '[0-9]{4}' 
+        WHEN CADPRODUTO.LST SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
+        THEN TRIM(TO_CHAR(CAST(REPLACE(
+          (REGEXP_MATCH(CADPRODUTO.LST,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
+          ))[1],'.','') AS INTEGER),'000009'))
+        WHEN CADPRODUTO.LST SIMILAR TO '[0-9][1-9][0-9]{2}' 
         THEN CADPRODUTO.LST|| '01'
-        WHEN CADPRODUTO.LST ~ '[0-9]{2}\.[0-9]{2}' 
+        WHEN CADPRODUTO.LST SIMILAR TO '[1-9][0-9]{2}' 
+        THEN '0'||CADPRODUTO.LST|| '01'
+        WHEN CADPRODUTO.LST SIMILAR TO '[0-9]{0,1}[1-9]{1}\.[0-9]{2}' 
         THEN REPLACE(CADPRODUTO.LST,'.','')|| '01'
-        WHEN CADPRODUTO.LST ~ '[0-9]\.[0-9]{2}' 
+        WHEN CADPRODUTO.LST SIMILAR TO '[1-9]\.[0-9]{2}' 
         THEN '0'||REPLACE(CADPRODUTO.LST,'.','')|| '01'
-        WHEN CADPRODUTO.LST ~ '[0-9]{4}' 
-        THEN COALESCE(CADPRODUTO.NCM) || '01'
+        WHEN CADIMPOSTO.OBSIMPOSTO SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
+        THEN TRIM(TO_CHAR(CAST(REPLACE(
+          (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
+          ))[1],'.','') AS INTEGER),'000009'))
         ELSE '090101'
     END AS IDLISTASERVICO, --== CTRIBMUN
     CADNBS.IDNBS, 
