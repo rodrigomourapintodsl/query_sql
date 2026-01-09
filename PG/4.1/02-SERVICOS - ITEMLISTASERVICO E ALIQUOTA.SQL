@@ -1,17 +1,17 @@
   SELECT
       CASE 
-          WHEN CADPRODUTO.LST SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
-          THEN TRIM(TO_CHAR(CAST(REPLACE(
-            (REGEXP_MATCH(CADPRODUTO.LST,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
-            ))[1],'.','') AS INTEGER),'000009'))
+          -- WHEN CADPRODUTO.LST SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
+          -- THEN TRIM(TO_CHAR(CAST(REPLACE(
+          --   (REGEXP_MATCH(CADPRODUTO.LST,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
+          --   ))[1],'.','') AS INTEGER),'000009'))
           WHEN CADPRODUTO.LST SIMILAR TO '[0-9][1-9][0-9]{2}' 
           THEN CADPRODUTO.LST|| '01'
           WHEN CADPRODUTO.LST SIMILAR TO '[1-9][0-9]{2}' 
           THEN '0'||CADPRODUTO.LST|| '01'
-          WHEN CADPRODUTO.LST SIMILAR TO '[0-9]{1}[1-9]{1}\.[0-9]{2}' 
-          THEN REPLACE(CADPRODUTO.LST,'.','')|| '01'
-          WHEN CADPRODUTO.LST SIMILAR TO '[1-9]\.[0-9]{2}' 
-          THEN '0'||REPLACE(CADPRODUTO.LST,'.','')|| '01'
+          -- WHEN CADPRODUTO.LST SIMILAR TO '[0-9]{1}[1-9]{1}\.[0-9]{2}' 
+          -- THEN REPLACE(CADPRODUTO.LST,'.','')|| '01'
+          -- WHEN CADPRODUTO.LST SIMILAR TO '[1-9]\.[0-9]{2}' 
+          -- THEN '0'||REPLACE(CADPRODUTO.LST,'.','')|| '01'
           WHEN CADIMPOSTO.OBSIMPOSTO SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
           THEN TRIM(TO_CHAR(CAST(REPLACE(
             (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
@@ -26,9 +26,9 @@
       NOTASFISCAIS.ALIQISS,
       NOTASFISCAIS.VALISS AS VLISS,
       /*Reforma Tributária*/
-      COALESCE(MAX(fiscalitemimposto.idcst),'000001') AS IDCLASSIFICACAOTRIBUTARIA,
-      '030101' AS Codigo_Indicador_Operacao --no estabelecimento fornecedor
-  --    '000001' AS IDCLASSIFICACAOTRIBUTARIA
+      COALESCE(MAX(cstibscbs.idclassificacaotributaria),'000002') AS IDCLASSIFICACAOTRIBUTARIA,
+      '030101' AS Codigo_Indicador_Operacao, --no estabelecimento fornecedor
+      '080101' AS IndOp_IBSCBS --(AnexoVII-IndOp_IBSCBS) Valor fixo
     FROM NOTASFISCAIS
     JOIN DETNOTAFISCAL ON DETNOTAFISCAL.CODNOTA = NOTASFISCAIS.CODNOTA AND DETNOTAFISCAL.CODHOTEL = NOTASFISCAIS.CODHOTEL
       LEFT JOIN CADPRODUTO ON CADPRODUTO.CODPRODUTO=
@@ -41,7 +41,10 @@
             AND CADIMPOSTO.CODHOTEL = DETNOTAFISCAL.CODHOTEL
       LEFT JOIN CADNBS ON CADNBS.CODNBS = CADPRODUTO.CODNBS AND CADNBS.CODHOTEL = CADPRODUTO.CODHOTEL 
       ---
-      LEFT JOIN FISCALITEMIMPOSTO ON FISCALITEMIMPOSTO.CDORIGEMDOCITEM = DETNOTAFISCAL.DETCODNOTA AND FISCALITEMIMPOSTO.CODHOTEL = DETNOTAFISCAL.CODHOTEL AND FISCALITEMIMPOSTO.FLIMPOSTOABRANGENCIA = 0
+      JOIN cstibscbs 
+        ON cstibscbs.codhotel = CADIMPOSTO.codhotel
+        AND cstibscbs.cdcstibscbs =  CADIMPOSTO.cdcst
+        AND CADIMPOSTO.tipoimposto = 'B'
       ---
     WHERE NOTASFISCAIS.CODHOTEL = :CDEMPRESA
     AND NOTASFISCAIS.CODNOTA = :CDNOTA

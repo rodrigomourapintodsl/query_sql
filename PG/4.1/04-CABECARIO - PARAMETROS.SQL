@@ -35,8 +35,10 @@ SELECT
     0 AS finNFSe, --Indicador da finalidade da emissão de NFS-e 
     1 AS indFinal, --Indica operação de uso ou consumo pessoal.
     1 AS tpOper, -- código indicador de operação (1 == Fornecimento com pagamento posterior; 2 == Recebimento do pagamento com fornecimento já realizado; 3 == Fornecimento com pagamento já realizado; 4 == Recebimento do pagamento com fornecimento posterior; 5 == Fornecimento e recebimento do pagamento concomitantes.)
-    4 AS tpEnteGov, -- Tipo de ente governamental  (1 == União;2 == Estado;3 == Distrito Federal;4 == Município;9 == Outro )
+    0 AS tpEnteGov, -- Tipo de ente governamental  (1 == União;2 == Estado;3 == Distrito Federal;4 == Município;9 == Outro )
     CASE WHEN CONFIGURA.CGC = NOTASFISCAIS.CGCCPF THEN 0 ELSE 1 END AS indDest, --0 = idTomadorAdquirenteDestinatarioIguais, 1 = idTomadorAdquirenteIguais
+    CASE REGEXP_REPLACE(CONFIGURA3.NFSECNAE,'[^0-9]','','g') WHEN '9491000' THEN 1 ELSE 0 END AS tpSSQN, --0-Normal,1-Imune
+    CASE REGEXP_REPLACE(CONFIGURA3.NFSECNAE,'[^0-9]','','g') WHEN '9491000' THEN 3 ELSE 0 END AS tipodeimunidade, --1-OrgãoPublico,2-EntidadeDiplomatica,3-Outros
     0 AS ZERO,
     1 AS UM
   FROM NOTASFISCAIS

@@ -13,7 +13,7 @@ CASE NFERETORNO.FLTIPONOTA
        WHEN '65' THEN 'NFC-e'
        WHEN '59' THEN 'CF-e-SAT'
        WHEN '67' THEN 'CT-e'
-   ELSE 'NF' END ELSE 'NF' END ELSE 'NF' --CADMODELOSFISCAIS.CODFISCAL
+   ELSE 'NF' END ELSE 'NF' END ELSE 'NF'
 END AS TIPO_NOTA,
 NFERETORNO.IDNOTA AS NFE_SERVICOS,
 COALESCE(NOTASFISCAIS.DATAEMISSAO,NOTAENTRADA.DATAEMISSAO, notadevolucao.dataemissaodev) AS DATAEMISSAO,
@@ -71,7 +71,7 @@ NOTASFISCAIS.VALIRRET,
 NOTASFISCAIS.VALCOFINSRET,
 NOTASFISCAIS.VALCSLLRET,      
 COALESCE(NOTASFISCAIS.SITUACAO,NOTAENTRADA.SITUACAO, notadevolucao.STATUS) AS SITUACAO,
-CASE WHEN NFERETORNO.FLTIPONOTA = 1 THEN COALESCE(NULLIF(RAZOES.MOTCANC,''),NULLIF(NOTASFISCAIS.DESCMOTIVOCANCEL,''),CASE WHEN NOTASFISCAIS.SITUACAO = 'C' THEN 'CANCELAMENTO DE NOTA DE SERVIÇOS PELO ENFE MANUTENÇÃO' ELSE '__' END)
+CASE WHEN NFERETORNO.FLTIPONOTA = 1 THEN COALESCE(NULLIF(RAZOES.MOTCANC,''),NULLIF(NOTASFISCAIS.DESCMOTIVOCANCEL,''),CASE WHEN NOTASFISCAIS.SITUACAO = 'C' THEN 'CANCELAMENTO DE NOTA DE SERVIÇOS PELO ENFE MANUTENÇÃO' END)
   WHEN NOTASFISCAIS.SITUACAO = 'C' THEN COALESCE(NULLIF(RAZOES.MOTCANC,''),NULLIF(NOTASFISCAIS.DESCMOTIVOCANCEL,''))
   WHEN NOTAENTRADA.SITUACAO = 'C' THEN 'nota de entrada cancelada'
   WHEN notadevolucao.STATUS = 'C' THEN NULLIF(notadevolucao.MOTIVOCANCELAMENTO,'') 
@@ -79,10 +79,10 @@ END AS MOTIVO_CANCELAMENTO,
 NFERETORNO.CDEMPRESA,
 NFERETORNO.FLTIPONOTA, 
 CASE 
-     WHEN NOTASFISCAIS.CODNOTA IS NOT NULL THEN 0 --Saída
-     WHEN NFERETORNO.FLMODOEMISSAO = 16   THEN 0 --Manifesto
-     WHEN NOTADEVOLUCAO.CHAVE  IS NOT NULL THEN 2 --Devolução
-     WHEN NOTAENTRADA.CODNOTA IS NOT NULL THEN 1 --Entrada
+     WHEN NOTASFISCAIS.CODNOTA IS NOT NULL THEN 0 
+     WHEN NFERETORNO.FLMODOEMISSAO = 16   THEN 0 
+     WHEN NOTADEVOLUCAO.CHAVE  IS NOT NULL THEN 2 
+     WHEN NOTAENTRADA.CODNOTA IS NOT NULL THEN 1 
      ELSE NFERETORNO.FLTIPONOTAES 
 END AS FLTIPONOTAES,
 NFERETORNO.FLTIPOOPERACAO,
@@ -113,15 +113,6 @@ LEFT JOIN CADMODELOSFISCAIS ON CADMODELOSFISCAIS.CODMODELO = NOTASFISCAIS.MODELO
 LEFT JOIN nfeconfig on NFECONFIG.FLTIPONOTAES = 0 AND nfeconfig.CDEMPRESA = NFERETORNO.CDEMPRESA
 CROSS JOIN LATERAL (SELECT 
 CAST(CASE 
-WHEN nferetorno.fltiponota = 1 AND nferetorno.flstatus = 3 AND nferetorno.iderro='E0240' AND NOTASFISCAIS.CODPAIS in ('1058','01058')
-THEN concat(
-lower('<script>window.location = "'||'https://viacep.com.br/ws/'),
-NOTASFISCAIS.ESTADO||'/', 
-NOTASFISCAIS.CIDADE||'/', 
-NOTASFISCAIS.ENDERECO, 
-NOTASFISCAIS.NROENDERECO||'/', 
-lower('json/')||lower('";</script>')
-)
 WHEN nferetorno.fltiponota = 1
       and nferetorno.flstatus in (2,5,3,6)
       and nferetorno.idcodverificacao IS NULL
@@ -130,10 +121,8 @@ THEN ''
          ||lower('<html lang="pt-')||UPPER('BR">')
          ||lower('<head><meta charset="utf-8"><script type="text/javascript">')
          ||lower('var url = "')||lower('https://www.nfse.gov.br/consulta')||'P'||lower('ublica/?tpc=1&chave=')||nferetorno.idchave||'";'
-         --||lower('var url = "')||lower('https://www.nfse.gov.br/')||INITCAP('Emissor')||INITCAP('Nacional/')||INITCAP('Notas/')||INITCAP('Download/')||UPPER('DANFS')||LOWER('e/')||nferetorno.idchave||'";'
          ||lower('var urllogado = "')||lower('https://www.nfse.gov.br/')||INITCAP('Emissor')||INITCAP('Nacional/')||INITCAP('Notas/')||INITCAP('Visualizar/')||INITCAP('Index/')||nferetorno.idchave||'";'
          ||lower('var idchave = "')||nferetorno.idchave||'";'
-         --||lower('if (typeof idchave !== "undefined" ) {document.write("')||UPPER('NFS-e: "')||lower(' + idchave + "<br>")};') 
          ||lower('var fso = new ')||INITCAP('Active')||upper('X')||INITCAP('Object( "')||INITCAP('Scripting.')||INITCAP('File')||INITCAP('System')||INITCAP('Object");')
          ||lower('var shell = new ')||upper('A')||lower('ctive')||upper('XO')||lower('bject( "')||upper('WS')||lower('cript.')||upper('S')||lower('hell");')
          ||lower('var caminhoEdge = "C:\\\\Program Files (x86)\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe";')
@@ -142,10 +131,14 @@ THEN ''
          ||lower('document.get')||INITCAP('Element')||INITCAP('By')||INITCAP('Id')||lower('("txtChaveIdentificacao").inner')||upper('HTML')||lower('=idchave;')
          ||lower('}')
          ||lower('function Executar_Edge() {')
+          ||lower('try {')
           ||lower('if (fso.')||INITCAP('File')||INITCAP('Exists')||lower('(caminhoEdge)) {')
            ||lower('shell.run(''"'' + caminhoEdge + ''" --app='' + url);')
            ||lower('} else {')
            ||lower('shell.run(''"'' + caminhoChrome + ''" --app='' + url);')
+          ||lower('}')
+          ||lower('} finally {')
+          ||lower('shell.run(''"'' + caminhoChrome + ''" --app='' + url);')
           ||lower('}')
          ||lower('}')
          ||lower('function Executar_Edge_logado() {')
@@ -169,15 +162,6 @@ WHEN nferetorno.fltiponota = 1
       and coalesce(nferetorno.idnota, '') <> '' 
 THEN 
 CASE CONFIGURA3.CODIBGEHOTEL 
- WHEN '3170206' THEN ''
-          ||lower('<script>window.location = "')
-          ||lower(  'https://nfseapi.uberlandia.mg.gov.br/nfse-api'  )
-          ||'/'||lower('consultar')||REPLACE(INITCAP('Nfse Por Codigo Verificacao'),' ','')
-          ||'/'||lower('download')||INITCAP('Pdf')
-          ||'?'||lower('numero')||INITCAP('Nfse=')||NFERetorno.IDNota
-          ||'&'||lower('codigo')||INITCAP('Verificacao=')||NFERetorno.IDCodVerificacao
-          ||'&'||lower('cnpj=')||regexp_replace(configura.cgc, '[^0-9]', '', lower('gi'))
-          ||lower('";</script>')
  WHEN '3550308' THEN ''
           ||lower('<script>window.location = "' 
           ||'https://nfe.prefeitura.sp.gov.br/contribuinte/notaprintimg.aspx?ccm='
@@ -204,16 +188,8 @@ END
 as bytea)  
 as DSHTMLRPS
 ) AS IMPRESSAO
-WHERE ((
+WHERE
       NOTASFISCAIS.DATAEMISSAO BETWEEN :DATAINI AND :DATAFIM AND NOTASFISCAIS.CODHOTEL = :CDEMPRESA 
 OR NOTAENTRADA.DATAEMISSAO BETWEEN :DATAINI AND :DATAFIM AND NOTAENTRADA.CODHOTEL = :CDEMPRESA 
 OR notadevolucao.dataemissaodev BETWEEN :DATAINI AND :DATAFIM AND notadevolucao.CODHOTEL = :CDEMPRESA 
-))
-OR ((((CAST( :DATAINI AS DATE) > CURRENT_DATE)))) AND ((  NOTASFISCAIS.DATAEMISSAO >= CURRENT_DATE +1 -CAST(EXTRACT('DAY' FROM CURRENT_DATE) AS INT)
-AND CAST( :DATAINI AS DATE) = CAST(CURRENT_DATE +1 -CAST(EXTRACT('DAY' FROM CURRENT_DATE) AS INT) + INTERVAL '1 MONTH' AS DATE) 
-OR NOTAENTRADA.DATAEMISSAO >= CURRENT_DATE +1 -CAST(EXTRACT('DAY' FROM CURRENT_DATE) AS INT)
-AND CAST( :DATAINI AS DATE) = CAST(CURRENT_DATE +1 -CAST(EXTRACT('DAY' FROM CURRENT_DATE) AS INT) + INTERVAL '1 MONTH' AS DATE) 
-OR notadevolucao.dataemissaodev >= CURRENT_DATE +1 -CAST(EXTRACT('DAY' FROM CURRENT_DATE) AS INT)
-AND CAST( :DATAINI AS DATE) = CAST(CURRENT_DATE +1 -CAST(EXTRACT('DAY' FROM CURRENT_DATE) AS INT) + INTERVAL '1 MONTH' AS DATE) 
-) AND (NFERETORNO.FLSTATUS NOT IN (2,5,9,10) OR NFERETORNO.FLTIPONOTA=1 AND NFERETORNO.IDNOTA IS NULL  ))
 ORDER BY COALESCE(NOTASFISCAIS.DATAEMISSAO,NOTAENTRADA.DATAEMISSAO, notadevolucao.dataemissaodev) DESC ,NFERETORNO.CDNOTA DESC
