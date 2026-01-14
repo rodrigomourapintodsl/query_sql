@@ -30,6 +30,35 @@ SELECT
         END
     END
 AS XPAG,
+/*Modalidade de pagamento*/
+-- 0. Não se aplica
+-- 1. Débito
+-- 2. Crédito
+-- 3. Dinheiro
+-- 4. Eletrônico
+-- 5. Pagamento posterior
+CASE COALESCE(ADIANTAMENTO.TIPOPGTO, PDVAPGTORAZAO.TIPOPGTO, PGTORAZAO.TIPOPGTO, RAZOES.TIPOPGTO)
+    WHEN 1 THEN 3
+    WHEN 2 THEN 2
+    WHEN 3 THEN 4
+    WHEN 4 THEN CASE  
+                WHEN CADEMPRESA.NOMEEMPRESA IN ('PIX') THEN 4
+                WHEN CADEMPRESA.NOMEEMPRESA LIKE 'PIX %' THEN 4
+                WHEN (' '|| CADEMPRESA.NOMEEMPRESA||' ') ILIKE '% PIX %' THEN 4
+                WHEN CADEMPRESA.tipocartao = 1 THEN 2 ELSE 1 END
+    WHEN 5 THEN 5
+    -- WHEN 6 THEN 0
+    -- WHEN 7 THEN 0
+    WHEN 8 THEN 5
+    WHEN 10 THEN 5
+    WHEN 13 THEN 4
+    WHEN 17 THEN 4
+    -- WHEN 45 THEN 0
+    -- WHEN 46 THEN 0
+    -- WHEN 47 THEN 0
+    -- WHEN 48 THEN 0
+    -- WHEN 95 THEN 0
+END AS modPagamento,
     2 AS MDPRESTACAO_COMEXT,
     0 AS VINCPREST_COMEXT,
     '790' AS TPMOEDA_COMEXT, --moeda ISO 4217 --https://www.bcb.gov.br/estabilidadefinanceira/todasmoedas

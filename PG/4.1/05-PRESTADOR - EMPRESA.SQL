@@ -17,7 +17,8 @@ SELECT
     CONFIGURA.CEP AS cep_emp,
     CONFIGURA.CIDADE AS xMunicipio_emp,
     1058 AS CodPais_emp,
-    'BR' as CodPaisAlf2_emp,
+    'BR' AS CodPaisAlf2_emp,
+    '0076' AS CODM49_emp,
     CONFIGURA.PAIS AS DSPAIS,
     CONFIGURA.NOMEEMPRESA AS PontoReferencia_emp,
     CASE 

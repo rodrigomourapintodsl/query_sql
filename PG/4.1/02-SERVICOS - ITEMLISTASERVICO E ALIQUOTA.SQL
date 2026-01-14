@@ -1,35 +1,27 @@
   SELECT
-      CASE 
-          -- WHEN CADPRODUTO.LST SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
-          -- THEN TRIM(TO_CHAR(CAST(REPLACE(
-          --   (REGEXP_MATCH(CADPRODUTO.LST,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
-          --   ))[1],'.','') AS INTEGER),'000009'))
-          WHEN CADPRODUTO.LST SIMILAR TO '[0-9][1-9][0-9]{2}' 
+      CASE --09.01.01.001
+          WHEN CADPRODUTO.LST SIMILAR TO '[0-9][1-9][0-9]{2}'
           THEN CADPRODUTO.LST|| '01'
-          WHEN CADPRODUTO.LST SIMILAR TO '[1-9][0-9]{2}' 
+          WHEN CADPRODUTO.LST SIMILAR TO '[1-9][0-9]{2}'
           THEN '0'||CADPRODUTO.LST|| '01'
-          -- WHEN CADPRODUTO.LST SIMILAR TO '[0-9]{1}[1-9]{1}\.[0-9]{2}' 
-          -- THEN REPLACE(CADPRODUTO.LST,'.','')|| '01'
-          -- WHEN CADPRODUTO.LST SIMILAR TO '[1-9]\.[0-9]{2}' 
-          -- THEN '0'||REPLACE(CADPRODUTO.LST,'.','')|| '01'
           WHEN CADIMPOSTO.OBSIMPOSTO SIMILAR TO '([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
           THEN TRIM(TO_CHAR(CAST(REPLACE(
             (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
             ))[1],'.','') AS INTEGER),'000009'))
           ELSE '090101'
-      END AS IDLISTASERVICO, --== CTRIBMUN
-      CADNBS.IDNBS, 
+      END AS IDLISTASERVICO, --== CTRIBMUN --https://www.gov.br/nfse/pt-br/mei-e-demais-empresas/codigos-de-tributacao-nacional-nbs
+      'Hospedagem em hotéis, hotelaria marítima e congêneres (o valor da alimentação e gorjeta, quando incluído no preço da diária, fica sujeito ao Imposto Sobre Serviços).' AS xTribNac
+      COALESCE(CADNBS.IDNBS, '103031100') AS IDNBS, --https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/anexo_b-nbs2-lista_servico_nacional-snnfse.xlsx
       '' AS IDREFERENCIA,
-  --    (REGEXP_MATCH(CADPRODUTO.LST,'[0-9\.]{4,8}\.([0-9]{3})'))[1] AS CODIGOTRIBUTACAOMUNICIPIO,
       (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'[0-9\.]{4,8}\.([0-9]{3})'))[1] AS CODIGOTRIBUTACAOMUNICIPIO,
       CADPRODUTO.CFPSDENTROMUNIC AS IDCFPS,
       NOTASFISCAIS.ALIQISS,
       NOTASFISCAIS.VALISS AS VLISS,
       /*Reforma Tributária*/
-      COALESCE(MAX(cstibscbs.idclassificacaotributaria),'000002') AS IDCLASSIFICACAOTRIBUTARIA,
       '030101' AS Codigo_Indicador_Operacao, --no estabelecimento fornecedor
       '080101' AS IndOp_IBSCBS --(AnexoVII-IndOp_IBSCBS) Valor fixo
     FROM NOTASFISCAIS
+    JOIN CONFIGURA4 ON CONFIGURA4.CODHOTEL = NOTASFISCAIS.CODHOTEL
     JOIN DETNOTAFISCAL ON DETNOTAFISCAL.CODNOTA = NOTASFISCAIS.CODNOTA AND DETNOTAFISCAL.CODHOTEL = NOTASFISCAIS.CODHOTEL
       LEFT JOIN CADPRODUTO ON CADPRODUTO.CODPRODUTO=
             COALESCE(NULLIF( DETNOTAFISCAL.CODPRODAGRUPADOR,0),
@@ -41,11 +33,6 @@
             AND CADIMPOSTO.CODHOTEL = DETNOTAFISCAL.CODHOTEL
       LEFT JOIN CADNBS ON CADNBS.CODNBS = CADPRODUTO.CODNBS AND CADNBS.CODHOTEL = CADPRODUTO.CODHOTEL 
       ---
-      JOIN cstibscbs 
-        ON cstibscbs.codhotel = CADIMPOSTO.codhotel
-        AND cstibscbs.cdcstibscbs =  CADIMPOSTO.cdcst
-        AND CADIMPOSTO.tipoimposto = 'B'
-      ---
     WHERE NOTASFISCAIS.CODHOTEL = :CDEMPRESA
     AND NOTASFISCAIS.CODNOTA = :CDNOTA
   GROUP BY DETNOTAFISCAL.CODPRODUTO,
@@ -56,7 +43,6 @@
     CADPRODUTO.LST,
     CADPRODUTO.NCM,
     CADNBS.IDNBS, 
-    --DETNOTAFISCAL.IDNBS,
     DETNOTAFISCAL.IDCEST,
     CADPRODUTO.CFPSDENTROMUNIC,
     DETNOTAFISCAL.TIPOIMPOSTO,

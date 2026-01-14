@@ -97,7 +97,7 @@ NFERETORNO.IDCODVERIFICACAO,
 NFERETORNO.DHRECEBIMENTO, 
 NFERETORNO.HRECEBIMENTO, 
 NFERETORNO.CDNOTA, 
-IMPRESSAO.DSHTMLRPS AS DSHTMLRPS,
+IMPRESSAO.DSHTMLRPS,
 NOTASFISCAIS.CODEMPRESA,
 CASE WHEN CADMODELOSFISCAIS.CODFISCAL='65' THEN 1 ELSE 0 END AS TIPONFENFCE
 FROM NOTASFISCAIS
@@ -110,7 +110,7 @@ JOIN CONFIGURA ON CONFIGURA.CODHOTEL = NFERETORNO.CDEMPRESA
 JOIN CONFIGURA3 ON CONFIGURA3.CODHOTEL = NFERETORNO.CDEMPRESA
 LEFT JOIN RAZOES ON NOTASFISCAIS.CODRAZAO = RAZOES.CODRAZAO AND NOTASFISCAIS.CODHOTEL = RAZOES.CODHOTEL
 LEFT JOIN CADMODELOSFISCAIS ON CADMODELOSFISCAIS.CODMODELO = NOTASFISCAIS.MODELOFISCAL
-LEFT JOIN nfeconfig on NFECONFIG.FLTIPONOTAES = 0 AND nfeconfig.CDEMPRESA = NFERETORNO.CDEMPRESA
+-- LEFT JOIN nfeconfig on NFECONFIG.FLTIPONOTAES = 0 AND nfeconfig.CDEMPRESA = NFERETORNO.CDEMPRESA
 CROSS JOIN LATERAL (SELECT 
 CAST(CASE 
 WHEN nferetorno.fltiponota = 1
@@ -123,22 +123,21 @@ THEN ''
          ||lower('var url = "')||lower('https://www.nfse.gov.br/consulta')||'P'||lower('ublica/?tpc=1&chave=')||nferetorno.idchave||'";'
          ||lower('var urllogado = "')||lower('https://www.nfse.gov.br/')||INITCAP('Emissor')||INITCAP('Nacional/')||INITCAP('Notas/')||INITCAP('Visualizar/')||INITCAP('Index/')||nferetorno.idchave||'";'
          ||lower('var idchave = "')||nferetorno.idchave||'";'
+         ||lower('var isie = window.navigator.app')||INITCAP('Name === "')||INITCAP('Microsoft Internet Explorer";')
          ||lower('var fso = new ')||INITCAP('Active')||upper('X')||INITCAP('Object( "')||INITCAP('Scripting.')||INITCAP('File')||INITCAP('System')||INITCAP('Object");')
          ||lower('var shell = new ')||upper('A')||lower('ctive')||upper('XO')||lower('bject( "')||upper('WS')||lower('cript.')||upper('S')||lower('hell");')
          ||lower('var caminhoEdge = "C:\\\\Program Files (x86)\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe";')
          ||lower('var caminhoChrome = "C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe";')
          ||lower('function inicio() {')
+         ||lower('if (isIE) {')
          ||lower('document.get')||INITCAP('Element')||INITCAP('By')||INITCAP('Id')||lower('("txtChaveIdentificacao").inner')||upper('HTML')||lower('=idchave;')
          ||lower('}')
+         ||lower('}')
          ||lower('function Executar_Edge() {')
-          ||lower('try {')
           ||lower('if (fso.')||INITCAP('File')||INITCAP('Exists')||lower('(caminhoEdge)) {')
            ||lower('shell.run(''"'' + caminhoEdge + ''" --app='' + url);')
            ||lower('} else {')
            ||lower('shell.run(''"'' + caminhoChrome + ''" --app='' + url);')
-          ||lower('}')
-          ||lower('} finally {')
-          ||lower('shell.run(''"'' + caminhoChrome + ''" --app='' + url);')
           ||lower('}')
          ||lower('}')
          ||lower('function Executar_Edge_logado() {')
@@ -148,12 +147,21 @@ THEN ''
            ||lower('shell.run(''"'' + caminhoChrome + ''" --app='' + urllogado);')
           ||lower('}')
          ||lower('}')
+        --  ||lower('function Teste_IE() {')
+        --    ||lower('shell.run(''"'' + caminhoChrome + ''" --app='' + window.location.href);')
+        --  ||lower('}')
          ||lower('</script>')
          ||Lower('</head>')
-         ||lower('<body onload="inicio()"><h1>')||INITCAP('Autenticação de notas')||lower('</h1>')
-         ||Lower('<button onclick="Executar_Edge()" style="width:200px">')||INITCAP('Consulta Pública')||lower('</button>')
-         ||Lower('<button onclick="Executar_Edge_logado()" style="width:200px">')||INITCAP('Consulta Logado')||lower('</button>')
-         ||Lower('<div><label>')||INITCAP('Chave ')||lower('da ')||upper('NFS')||lower('-e:')||lower('</label><label id="txtChaveIdentificacao" style="color:RoyalBlue"></label></div>')
+         ||lower('<body onload="inicio()">')
+         ||lower('<div id="iexplorer">')
+          ||lower('<h1>')||INITCAP('Autenticação de notas')||lower('</h1>')
+          ||Lower('<button onclick="Executar_Edge()" style="width:200px">')||INITCAP('Consulta Pública')||lower('</button>')
+          ||Lower('<button onclick="Executar_Edge_logado()" style="width:200px">')||INITCAP('Consulta Logado')||lower('</button>')
+          -- ||Lower('<button onclick="Teste_IE()" style="width:120px">')||INITCAP('Teste IE')||lower('</button>')
+          ||Lower('<br/>')
+          ||Lower('<div><label>')||lower('https://www.nfse.gov.br/consultaPublica/')||lower('</label>')||lower('</div>')
+          ||Lower('<div><label>')||INITCAP('Chave ')||lower('da ')||upper('NFS')||lower('-e:')||lower('</label><label id="txtChaveIdentificacao" style="color:RoyalBlue"></label></div>')
+         ||lower('</div>')
          ||Lower('</body>')
          ||Lower('</html>')
 WHEN nferetorno.fltiponota = 1 
