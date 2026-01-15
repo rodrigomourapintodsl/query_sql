@@ -1,9 +1,12 @@
 SELECT 
     EMITENTE.dsnomepessoa AS RazaoSocial,
     EMITENTE.iddocident AS CGC,
-    CASE WHEN CIDADE.idibge IN ('31026052') THEN
-      EMITENTE.IDIM 
+    CASE WHEN CIDADE.idibge IN ('31026052','2611606','21113002','3518701','3518800','3548500','3143906','2704302','3549805','4128104','3548708','3523909') THEN
+      cast(EMITENTE.IDIM AS varchar(15))
+      WHEN CIDADE.idibge IN ('1200401') THEN
+      regexp_replace(CONFIGURA.iddocident, '[^0-9]', '', 'g')
     END AS INSCMUNICIP,
+    REGEXP_REPLACE(EMITENTE.IDCNAE,'[^0-9]','','g') AS CNAE_EMP,
     '' AS CAEPF, --Pessoas Físicas
     0 AS cNaoNIF, ----0-NaoInformado,1-Dispensado,2-NaoExigencia
     PESSOAENDERECO.dslogradouro AS endereco_emp,

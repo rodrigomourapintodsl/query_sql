@@ -6,7 +6,8 @@ SELECT
         WHEN CONFIGURA3.CODIBGEHOTEL IN ('3518701','3518800','3548500','3143906','2704302','3549805','4128104','3548708','3523909')
        THEN '2.04' -- Gingfes Abrasf 2.04
     END AS verAplic,
-    'Hospedagem em hotéis, hotelaria marítima e congêneres (o valor da alimentação e gorjeta, quando incluído no preço da diária, fica sujeito ao Imposto Sobre Serviços).' AS xTribNac
+    'Hospedagem em hotéis, hotelaria marítima e congêneres (o valor da alimentação e gorjeta, quando incluído no preço da diária, fica sujeito ao Imposto Sobre Serviços).' 
+    AS xTribNac
     'NFS' 
     ||(SELECT ID ||
     CAST(  (SELECT mod(11-MOD(SUM(NFSE_MULT),11),10) AS NFSE_digito FROM (

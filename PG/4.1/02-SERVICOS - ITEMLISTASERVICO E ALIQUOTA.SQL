@@ -1,5 +1,6 @@
   SELECT
-      CASE --09.01.01.001
+      TRIM(To_Char( 
+        CAST( CASE --09.01.01.001
           WHEN CADPRODUTO.LST SIMILAR TO '[0-9][1-9][0-9]{2}'
           THEN CADPRODUTO.LST|| '01'
           WHEN CADPRODUTO.LST SIMILAR TO '[1-9][0-9]{2}'
@@ -9,11 +10,11 @@
             (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'([0-9]{0,1}[1-9]{1}\.{0,1}[0-9]{2}\.{0,1}[0-9]{2})(\.{1}[0-9]{3}){0,4}'
             ))[1],'.','') AS INTEGER),'000009'))
           ELSE '090101'
-      END AS IDLISTASERVICO, --== CTRIBMUN --https://www.gov.br/nfse/pt-br/mei-e-demais-empresas/codigos-de-tributacao-nacional-nbs
-      'Hospedagem em hotéis, hotelaria marítima e congêneres (o valor da alimentação e gorjeta, quando incluído no preço da diária, fica sujeito ao Imposto Sobre Serviços).' AS xTribNac
+      END AS INTEGER)
+     ,'00"."00"."00')) AS IDLISTASERVICO, --== CTRIBMUN --https://www.gov.br/nfse/pt-br/mei-e-demais-empresas/codigos-de-tributacao-nacional-nbs
       COALESCE(CADNBS.IDNBS, '103031100') AS IDNBS, --https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/anexo_b-nbs2-lista_servico_nacional-snnfse.xlsx
       '' AS IDREFERENCIA,
-      (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'[0-9\.]{4,8}\.([0-9]{3})'))[1] AS CODIGOTRIBUTACAOMUNICIPIO,
+      (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'[0-9\.]{4,8}\.([0-9]{3,8})'))[1] AS CODIGOTRIBUTACAOMUNICIPIO,
       CADPRODUTO.CFPSDENTROMUNIC AS IDCFPS,
       NOTASFISCAIS.ALIQISS,
       NOTASFISCAIS.VALISS AS VLISS,
