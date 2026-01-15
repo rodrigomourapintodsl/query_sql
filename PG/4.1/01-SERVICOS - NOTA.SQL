@@ -87,7 +87,7 @@ SELECT NOTASFISCAIS.CODNOTA AS CDDOCFISCAL,
     COALESCE(IBPT.pcaliqnac,NOTASFISCAIS.pcaliqibpt) AS PCIBPTFED,
     NOTASFISCAIS.DSOBSIBPT,
 /*reforma tributaria*/
-cbsibs.IDCSTIVADUAL AS cstclassificacaotributaria,
+-- cbsibs.IDCSTIVADUAL AS cstclassificacaotributaria,
 COALESCE(cbsibs.idclassificacaotributaria,'200048') AS idclassificacaotributaria,
 CASE WHEN FLCBSIBS = 1 THEN
 coalesce(   
@@ -117,7 +117,12 @@ CASE WHEN cbsibs.FLCBSIBS = 1 THEN
 cbsibs.aliqreal_CBS_federal 
 ELSE 
 cbsibs_calculada.aliqreal_CBS_federal
-END as CBS_Valor,
+END as CBS_Aliquotareal_EFETIVA,
+CASE WHEN cbsibs.FLCBSIBS = 1 THEN
+cbsibs.vlimposto_CBS_federal 
+ELSE 
+cbsibs_calculada.vlimposto_CBS_federal
+END AS CBS_Valor
 ----
 CASE WHEN cbsibs.FLCBSIBS = 1 THEN
 cbsibs.aliquota_IBS_estadual

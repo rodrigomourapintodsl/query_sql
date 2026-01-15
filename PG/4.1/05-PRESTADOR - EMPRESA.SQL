@@ -6,7 +6,7 @@ SELECT
       WHEN CONFIGURA3.CODIBGEHOTEL IN ('1200401') THEN
       regexp_replace(CONFIGURA.CGC, '[^0-9]', '', 'g')
     END AS INSCMUNICIP,
-    REGEXP_REPLACE(CONFIGURA3.NFSECNAE,'[^0-9]','','g') AS CNAE,
+    REGEXP_REPLACE(CONFIGURA3.NFSECNAE,'[^0-9]','','g') AS CNAE_EMP,
     '' AS CAEPF, --Pessoas Físicas
     0 AS cNaoNIF, ----0-NaoInformado,1-Dispensado,2-NaoExigencia
     CONFIGURA.ENDERECO AS endereco_emp,
