@@ -4,7 +4,7 @@ SELECT
     CASE WHEN CIDADE.idibge IN ('31026052','2611606','21113002','3518701','3518800','3548500','3143906','2704302','3549805','4128104','3548708','3523909') THEN
       cast(EMITENTE.IDIM AS varchar(15))
       WHEN CIDADE.idibge IN ('1200401') THEN
-      regexp_replace(CONFIGURA.iddocident, '[^0-9]', '', 'g')
+      regexp_replace(EMITENTE.iddocident, '[^0-9]', '', 'g')
     END AS INSCMUNICIP,
     REGEXP_REPLACE(EMITENTE.IDCNAE,'[^0-9]','','g') AS CNAE_EMP,
     '' AS CAEPF, --Pessoas Físicas
@@ -19,6 +19,7 @@ SELECT
     CIDADE.dscidade AS xMunicipio_emp,
     RIGHT(CAST(PAIS.idibge AS VARCHAR(5)),4) AS CodPais_emp,
     PAIS.dssigla as CodPaisAlf2_emp,
+    '0076' AS CODM49_emp,
     PAIS.DSPAIS,
     EMPRESA.dsapelido AS PontoReferencia_emp,
     CASE 

@@ -15,9 +15,13 @@ SELECT
     END AS IDLISTASERVICO, --== cTribMun
     nbs.idnbs, 
     produtoempresa.idreferencia,
-    (regexp_match(LISTASERVICO.IDLISTASERVICO,'[0-9\.]{4,8}\.([0-9]{3,8})'))[1] AS CodigoTributacaoMunicipio,
+    (regexp_match(LISTASERVICO.IDLISTASERVICO,'[0-9\.]{3,16}[\.\\\/]([0-9]{3,16})'))[1] AS CodigoTributacaoMunicipio,
     cfps.idcfps,
     DOCFISCALITEM.PCISS AS ALIQISS,
+    (SELECT sum(VLISS) FROM DOCFISCALITEM 
+      WHERE CDEMPRESA = :CDEMPRESA
+      AND CDDOCFISCAL = :CDNOTA
+    ) AS VLISS,
       '030101' AS Codigo_Indicador_Operacao, --no estabelecimento fornecedor
       '080101' AS IndOp_IBSCBS --(AnexoVII-IndOp_IBSCBS) Valor fixo
   FROM DOCFISCAL

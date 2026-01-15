@@ -24,13 +24,13 @@ END
 CASE WHEN lanccaixacontahotel.DTIN = lanccaixacontahotel.DTOUT THEN
 'Day-Use: '||lanccaixacontahotel.DTOUT
 WHEN date_trunc('month',lanccaixacontahotel.DTIN) = date_trunc('month',lanccaixacontahotel.DTOUT) THEN
-'In: ' || TO_CHAR(lanccaixacontahotel.DTIN,'DD')|| ' à ' ||
+'In: ' || TO_CHAR(lanccaixacontahotel.DTIN,'DD')|| ' a ' ||
 'Out: ' || TO_CHAR(lanccaixacontahotel.DTOUT,'DD/MM/YYYY')
 WHEN date_trunc('year',lanccaixacontahotel.DTIN) = date_trunc('year',lanccaixacontahotel.DTOUT) THEN
-'In: ' || TO_CHAR(lanccaixacontahotel.DTIN,'DD/MM')|| ' à ' ||
+'In: ' || TO_CHAR(lanccaixacontahotel.DTIN,'DD/MM')|| ' a ' ||
 'Out: ' || TO_CHAR(lanccaixacontahotel.DTOUT,'DD/MM/YYYY')
 ELSE
-'In: ' || TO_CHAR(lanccaixacontahotel.DTIN,'DD/MM/YYYY')|| ' - ' ||
+'In: ' || TO_CHAR(lanccaixacontahotel.DTIN,'DD/MM/YYYY')|| ' a ' ||
 'Out: ' || TO_CHAR(lanccaixacontahotel.DTOUT,'DD/MM/YYYY')
 END
 ,

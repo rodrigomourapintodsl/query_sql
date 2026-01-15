@@ -14,7 +14,7 @@
      ,'00"."00"."00')) AS IDLISTASERVICO, --== CTRIBMUN --https://www.gov.br/nfse/pt-br/mei-e-demais-empresas/codigos-de-tributacao-nacional-nbs
       COALESCE(CADNBS.IDNBS, '103031100') AS IDNBS, --https://www.gov.br/nfse/pt-br/biblioteca/documentacao-tecnica/documentacao-atual/anexo_b-nbs2-lista_servico_nacional-snnfse.xlsx
       '' AS IDREFERENCIA,
-      (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'[0-9\.]{4,8}\.([0-9]{3,8})'))[1] AS CODIGOTRIBUTACAOMUNICIPIO,
+      (REGEXP_MATCH(CADIMPOSTO.OBSIMPOSTO,'[0-9\.]{3,16}[\.\\\/]([0-9]{3,16})'))[1] AS CODIGOTRIBUTACAOMUNICIPIO,
       CADPRODUTO.CFPSDENTROMUNIC AS IDCFPS,
       NOTASFISCAIS.ALIQISS,
       NOTASFISCAIS.VALISS AS VLISS,
