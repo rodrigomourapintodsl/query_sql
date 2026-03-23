@@ -10,7 +10,7 @@ SELECT
     END AS INSCMUNICIP,
     REGEXP_REPLACE(CONFIGURA3.NFSECNAE,'[^0-9]','','g') AS CNAE_EMP,
     '' AS CAEPF, --Pessoas Físicas
-    2 AS cNaoNIF, ----0-NaoInformado,1-Dispensado,2-NaoExigencia
+    2 AS cNaoNIF, ----1-Dispensado,2-NaoExigencia
 /*Endereço*/
     CONFIGURA.ENDERECO AS endereco_emp,
     COALESCE(CONFIGURA.ENDNUMERO,0) AS nroendereco_emp,
