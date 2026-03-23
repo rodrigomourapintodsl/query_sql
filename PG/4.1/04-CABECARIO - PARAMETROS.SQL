@@ -10,7 +10,7 @@ SELECT
 --    END AS REGIMEESPECIALTRIBUTACAO,
     0 AS REGIMEESPECIALTRIBUTACAO,  ----0-nenhum, 1-MicroempresaMunicipal, 2-Estimativa, 3-SociedadeProfissionais, 4-Cooperativa, 5-MicroempresarioIndividual, 6-MicroempresarioEmpresaPP, 7-LucroReal, 8-LucroPresumido, 9-SimplesNacional,10-Imune,11-EmpresaIndividualRELI,12-EmpresaPP,13-MicroEmpresario,14-Outros,15-MovimentoMensal,16-ISSQNAutonomos,17-ISSQNSociedade,18-NotarioRegistrador,19-TribFaturamentoVariavel,20-Fixo,21-Isencao,22-ExigibSuspensaJudicial,23-ExigibSuspensaAdm
     CASE WHEN NFERETORNO.FLTIPONOTA=1 AND ( NFERETORNO.FLSTATUS IN (2,6))
-        THEN NOTASFISCAIS.descmotivocancel 
+        THEN COALESCE(NULLIF(RAZOES.MOTCANC,''),NULLIF(NOTASFISCAIS.DESCMOTIVOCANCEL,''))
     END AS DSMOTIVOCANC,
     1 AS infAdicAT, ----0-Sim,1-Nao
     1 AS Transacao, ----0-Sim,1-Nao
@@ -45,23 +45,24 @@ SELECT
     3 AS TRES,
     4 AS QUATRO,
     5 AS CINCO,
-    CAST((regexp_match(NFECONFIG.blconfig,'(\[NF.)+'||
+    CAST(NULLIF((regexp_match(NFECONFIG.blconfig,'(\[NF.)+'||
         'SERVICO'      ||'\][\r\n]{1,2}.*[\r\n]{1,2}'||
         'VERSAO'       ||'=([^\n\r]{0,6})[\r\n]{1,2}'
-    ))[2] AS NUMERIC(5,2)) 
+    ))[2],'') AS NUMERIC(5,2)) 
     AS VERSAO_NACIONAL,
     CASE (regexp_match(NFECONFIG.blconfig,'(\[NF.)+'||
         'SERVICO'      ||'\][\r\n]{1,2}.*[\r\n]{1,2}'||
         'AMBIENTE'     ||'=([^\n\r]{0,1})[\r\n]{1,2}'
     ))[2] 
-    WHEN 0 THEN 2 --Homologação
-    WHEN 1 THEN 1 --Produção
+    WHEN '0' THEN 2 --Homologação
+    WHEN '1' THEN 1 --Produção
     END AS AMBIENTE_PRODUCAO
   FROM NOTASFISCAIS
   JOIN CONFIGURA ON CONFIGURA.CODHOTEL = NOTASFISCAIS.CODHOTEL
   JOIN CONFIGURA3 ON CONFIGURA3.CODHOTEL = NOTASFISCAIS.CODHOTEL
   JOIN CONFIGURA4 ON CONFIGURA4.CODHOTEL = NOTASFISCAIS.CODHOTEL
   JOIN NFERETORNO ON NFERETORNO.CDEMPRESA = NOTASFISCAIS.CODHOTEL AND NFERETORNO.CDNOTA = NOTASFISCAIS.CODNOTA
+  LEFT JOIN RAZOES ON NOTASFISCAIS.CODRAZAO = RAZOES.CODRAZAO AND NOTASFISCAIS.CODHOTEL = RAZOES.CODHOTEL
   LEFT JOIN nfeconfig ON NFECONFIG.cdempresa = NOTASFISCAIS.CODHOTEL AND NFECONFIG.fltiponotaes = 0
     WHERE NOTASFISCAIS.CODHOTEL = :CDEMPRESA
   AND NOTASFISCAIS.CODNOTA = :CDNOTA

@@ -13,6 +13,14 @@ SELECT COALESCE(
     'TITULO:'||TITULO.dsdocumento,
     'OUTRAS'
 ) AS XPAG,
+/*Modalidade de pagamento*/
+-- 0. Não se aplica
+-- 1. Débito
+-- 2. Crédito
+-- 3. Dinheiro
+-- 4. Eletrônico
+-- 5. Pagamento posterior
+3 AS modPagamento,
 2 AS mdPrestacao_comExt,
 0 AS vincPrest_comExt,
 CASE moeda.fliso4217 --moeda ISO 4217 --https://www.bcb.gov.br/estabilidadefinanceira/todasmoedas

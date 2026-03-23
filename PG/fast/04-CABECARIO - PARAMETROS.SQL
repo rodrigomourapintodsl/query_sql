@@ -57,8 +57,8 @@ SELECT
         'SERVICO'      ||'\][\r\n]{1,2}.*[\r\n]{1,2}'||
         'AMBIENTE'     ||'=([^\n\r]{0,1})[\r\n]{1,2}'
     ))[2] 
-    WHEN 0 THEN 2 --Homologação
-    WHEN 1 THEN 1 --Produção
+    WHEN '0' THEN 2 --Homologação
+    WHEN '1' THEN 1 --Produção
     END AS AMBIENTE_PRODUCAO
   FROM DOCFISCAL
   JOIN EMPRESA ON DOCFISCAL.CDEMPRESA = EMPRESA.CDEMPRESA

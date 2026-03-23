@@ -7,5 +7,6 @@ temp/
 Fast/Backup_postgres/
 # Ignore all .log files
 *.xml
-.vscode
-/POSTMAN/
+/.vscode/
+./POSTMAN/
+./PY/
