@@ -3,6 +3,9 @@
 
 # Ignore all files in any directory named temp
 temp/
-
+4.1/Backup_postgres/
+Fast/Backup_postgres/
 # Ignore all .log files
 *.xml
+.vscode
+/POSTMAN/
