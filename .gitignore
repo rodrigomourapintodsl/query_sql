@@ -10,7 +10,11 @@ Fast/Backup_postgres/
 PG/Fast/Backup_postgres/
 # Ignore all .log files
 *.xml
+.vscode/
+PG/4.1/.vscode/
 4.1/.vscode/
+PG/Fast/.vscode/
+Fast/.vscode/
 POSTMAN/
 PG/PY/
 PY/
