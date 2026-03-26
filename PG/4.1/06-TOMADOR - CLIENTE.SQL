@@ -32,10 +32,9 @@ SELECT
         THEN CAST(NOTASFISCAIS.CGCCPF AS VARCHAR(40))
     END AS Nif,
 
-    CASE WHEN COALESCE(NULLIF(RIGHT(CAST(NOTASFISCAIS.codpais AS VARCHAR(5)),4),''),'1058') = '1058'
-        THEN 2
-        WHEN TIPO.TIPOPESSOA = 'E' 
-        THEN 0 ----0-NaoInformado,1-Dispensado,2-NaoExigencia
+    CASE 
+        WHEN TIPO.TIPOPESSOA IN ( 'E','C') 
+        THEN 2 ----0-NaoInformado,1-Dispensado,2-NaoExigencia
     END AS cNaoNIF,
 
 /*Endereço*/
