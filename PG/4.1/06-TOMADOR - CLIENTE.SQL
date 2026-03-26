@@ -8,7 +8,7 @@ SELECT
     END AS nome, 
 
     CASE 
-        WHEN TIPO.TIPOPESSOA IN ('E','J')  --Brasil
+        WHEN TIPO.TIPOPESSOA IN ('F','J')  --Brasil
         THEN regexp_replace(NOTASFISCAIS.CGCCPF , '[^0-9]', '', 'g')
     END AS CGCCPF,
 
@@ -50,7 +50,7 @@ SELECT
     END AS nroendereco,
 
     CASE 
-        WHEN TIPO.TIPOENDERECO<>'C' AND NOTASFISCAIS.complemento > 'Z'
+        WHEN TIPO.TIPOENDERECO<>'C' AND NOTASFISCAIS.complemento > '000'
         THEN NOTASFISCAIS.complemento
     END AS complemento,
 
@@ -146,3 +146,6 @@ FROM NOTASFISCAIS
   WHERE NFERETORNO.CDNOTA = :CDNOTA
   AND NFERETORNO.CDEMPRESA = :CDEMPRESA
   AND NFERETORNO.fltiponota = 1 
+
+
+  
