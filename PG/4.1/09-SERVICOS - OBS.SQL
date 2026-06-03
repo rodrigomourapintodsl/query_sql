@@ -120,6 +120,22 @@ SELECT STRING_AGG(NFERETORNO.IDCHAVE,',')
     AND NFERETORNO.FLTIPONOTA = 0
     LIMIT 1
 )
+,'FNRH enviada: '||(
+SELECT to_char(max(filaoperacaofnrhhospedagem.dhprocessamento),'dd/MM/yyyy') AS DHENVIADOFNRH
+	FROM detestat 
+	JOIN ESTATISTICA 
+		 ON ESTATISTICA.ACESSO = detestat.ACESSO 
+		AND ESTATISTICA.codhotel = detestat.codhotel
+	JOIN filaoperacaofnrhhospedagem 
+		 ON filaoperacaofnrhhospedagem.idhospedagem = ESTATISTICA.idhospedagem
+		AND filaoperacaofnrhhospedagem.codhotel = ESTATISTICA.codhotel
+	WHERE detestat.ACESSODET = RAZOES.ACESSO 
+		AND detestat.codhotel = RAZOES.codhotel
+		AND detestat.ehregout = 'S'
+		AND NOT NOTASFISCAIS.ORIGEM IN (5)
+		AND filaoperacaofnrhhospedagem.flprocessostatus=1
+		AND filaoperacaofnrhhospedagem.flhospedagemstatus IN (3,4,5)
+)
 ),2000) AS OBSERVACOES
 ,NOTASFISCAIS.DSOBSIBPT,
 CASE WHEN NOTASFISCAIS.DATAHORAOUT IS NOT NULL THEN  'HOSPEDAGEM' END AS EVENTO_NOME,
